@@ -59,9 +59,9 @@ jobs:
 
           # ── 2160p Remux: Sprache auf Deutsch + Umbenennung ──
           yq -i '.language = "must_german"' 'profiles/2160p Remux.yml'
-          yq -i '.name = "Deutsch - 2160p Remux"' 'profiles/2160p Remux.yml'
-          mv 'profiles/2160p Remux.yml' 'profiles/Deutsch - 2160p Remux.yml'
-          echo "✅ 2160p Remux → Deutsch - 2160p Remux (language: must_german)"
+          yq -i '.name = "Deutsch"' 'profiles/2160p Remux.yml'
+          mv 'profiles/2160p Remux.yml' 'profiles/Deutsch.yml'
+          echo "✅ 2160p Remux → Deutsch (language: must_german)"
 
           # ── Weitere Overrides hier ergänzen, z.B.: ──
           # yq -i '.language = "must_german" | .name = "Deutsch - 1080p Quality"' 'profiles/1080p Quality.yml'
