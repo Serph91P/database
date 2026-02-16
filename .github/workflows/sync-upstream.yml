@@ -57,8 +57,13 @@ jobs:
         run: |
           echo "Applying overrides to profiles..."
 
-          # Basis-Profil von Upstream sicherstellen (falls vorheriger Lauf es entfernt hat)
+          # Basis-Profile von Upstream sicherstellen
           git checkout upstream/stable -- 'profiles/2160p Remux.yml'
+          git checkout upstream/stable -- 'profiles/1080p Quality.yml'
+
+          # ══════════════════════════════════════════
+          # 2160p Remux Varianten
+          # ══════════════════════════════════════════
 
           # ── Deutsch: Sprache Deutsch ──
           cp 'profiles/2160p Remux.yml' 'profiles/Deutsch.yml'
@@ -74,6 +79,36 @@ jobs:
           cp 'profiles/2160p Remux.yml' 'profiles/Original.yml'
           yq -i '.language = "must_original" | .name = "Original"' 'profiles/Original.yml'
           echo "✅ Original (must_original)"
+
+          # ══════════════════════════════════════════
+          # Anime Varianten (basierend auf 1080p Quality)
+          # ══════════════════════════════════════════
+
+          # Anime Scoring das zu allen Anime-Profilen hinzugefügt wird
+          ANIME_SCORING='[
+            {"name": "Anime Bluray Tier 1", "score": 125000},
+            {"name": "Anime Bluray Tier 2", "score": 124000},
+            {"name": "Anime Bluray Tier 3", "score": 123000},
+            {"name": "Anime Bluray Tier 4", "score": 122000},
+            {"name": "Anime Bluray Tier 5", "score": 121000},
+            {"name": "Anime WEB-DL Tier 1", "score": 85000},
+            {"name": "Anime WEB-DL Tier 2", "score": 84000}
+          ]'
+
+          # ── Anime Deutsch ──
+          cp 'profiles/1080p Quality.yml' 'profiles/Anime Deutsch.yml'
+          yq -i ".language = \"must_german\" | .name = \"Anime Deutsch\" | .tags += [\"Anime\"] | .custom_formats += ${ANIME_SCORING}" 'profiles/Anime Deutsch.yml'
+          echo "✅ Anime Deutsch (must_german)"
+
+          # ── Anime Englisch ──
+          cp 'profiles/1080p Quality.yml' 'profiles/Anime Englisch.yml'
+          yq -i ".language = \"must_english\" | .name = \"Anime Englisch\" | .tags += [\"Anime\"] | .custom_formats += ${ANIME_SCORING}" 'profiles/Anime Englisch.yml'
+          echo "✅ Anime Englisch (must_english)"
+
+          # ── Anime Original ──
+          cp 'profiles/1080p Quality.yml' 'profiles/Anime Original.yml'
+          yq -i ".language = \"must_original\" | .name = \"Anime Original\" | .tags += [\"Anime\"] | .custom_formats += ${ANIME_SCORING}" 'profiles/Anime Original.yml'
+          echo "✅ Anime Original (must_original)"
 
       - name: Commit & Push
         if: steps.merge.outputs.merged == 'true'
