@@ -57,15 +57,20 @@ jobs:
         run: |
           echo "Applying overrides to profiles..."
 
-          # ── 2160p Remux: Sprache auf Deutsch + Umbenennung ──
-          yq -i '.language = "must_german"' 'profiles/2160p Remux.yml'
-          yq -i '.name = "Deutsch"' 'profiles/2160p Remux.yml'
-          mv 'profiles/2160p Remux.yml' 'profiles/Deutsch.yml'
-          echo "✅ 2160p Remux → Deutsch (language: must_german)"
+          # ── Deutsch: Sprache Deutsch ──
+          yq -i '.language = "must_german" | .name = "Deutsch"' 'profiles/2160p Remux.yml'
+          cp 'profiles/2160p Remux.yml' 'profiles/Deutsch.yml'
+          echo "✅ 2160p Remux → Deutsch (must_german)"
 
-          # ── Weitere Overrides hier ergänzen, z.B.: ──
-          # yq -i '.language = "must_german" | .name = "Deutsch - 1080p Quality"' 'profiles/1080p Quality.yml'
-          # mv 'profiles/1080p Quality.yml' 'profiles/Deutsch - 1080p Quality.yml'
+          # ── Englisch: Sprache English ──
+          yq -i '.language = "must_english" | .name = "Englisch"' 'profiles/2160p Remux.yml'
+          cp 'profiles/2160p Remux.yml' 'profiles/Englisch.yml'
+          echo "✅ 2160p Remux → Englisch (must_english)"
+
+          # ── Original: Sprache Original ──
+          yq -i '.language = "must_original" | .name = "Original"' 'profiles/2160p Remux.yml'
+          cp 'profiles/2160p Remux.yml' 'profiles/Original.yml'
+          echo "✅ 2160p Remux → Original (must_original)"
 
       - name: Commit & Push
         if: steps.merge.outputs.merged == 'true'
