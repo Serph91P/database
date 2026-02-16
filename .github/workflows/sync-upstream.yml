@@ -57,20 +57,23 @@ jobs:
         run: |
           echo "Applying overrides to profiles..."
 
+          # Basis-Profil von Upstream sicherstellen (falls vorheriger Lauf es entfernt hat)
+          git checkout upstream/stable -- 'profiles/2160p Remux.yml'
+
           # ── Deutsch: Sprache Deutsch ──
-          yq -i '.language = "must_german" | .name = "Deutsch"' 'profiles/2160p Remux.yml'
           cp 'profiles/2160p Remux.yml' 'profiles/Deutsch.yml'
-          echo "✅ 2160p Remux → Deutsch (must_german)"
+          yq -i '.language = "must_german" | .name = "Deutsch"' 'profiles/Deutsch.yml'
+          echo "✅ Deutsch (must_german)"
 
           # ── Englisch: Sprache English ──
-          yq -i '.language = "must_english" | .name = "Englisch"' 'profiles/2160p Remux.yml'
           cp 'profiles/2160p Remux.yml' 'profiles/Englisch.yml'
-          echo "✅ 2160p Remux → Englisch (must_english)"
+          yq -i '.language = "must_english" | .name = "Englisch"' 'profiles/Englisch.yml'
+          echo "✅ Englisch (must_english)"
 
           # ── Original: Sprache Original ──
-          yq -i '.language = "must_original" | .name = "Original"' 'profiles/2160p Remux.yml'
           cp 'profiles/2160p Remux.yml' 'profiles/Original.yml'
-          echo "✅ 2160p Remux → Original (must_original)"
+          yq -i '.language = "must_original" | .name = "Original"' 'profiles/Original.yml'
+          echo "✅ Original (must_original)"
 
       - name: Commit & Push
         if: steps.merge.outputs.merged == 'true'
