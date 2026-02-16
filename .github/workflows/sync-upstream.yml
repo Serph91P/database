@@ -44,6 +44,14 @@ jobs:
             echo "merged=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Remove upstream-only workflows
+        if: steps.merge.outputs.merged == 'true'
+        run: |
+          # notify.yml braucht Secrets die nur im Original-Repo existieren
+          rm -f .github/workflows/notify.yml
+          rm -f .github/workflows/devSync.yml
+          echo "✅ Removed upstream-only workflows"
+
       - name: Apply Custom Overrides
         if: steps.merge.outputs.merged == 'true'
         run: |
