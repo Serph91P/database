@@ -57,13 +57,15 @@ jobs:
         run: |
           echo "Applying overrides to profiles..."
 
-          # ── 2160p Remux: Sprache auf Deutsch ──
+          # ── 2160p Remux: Sprache auf Deutsch + Umbenennung ──
           yq -i '.language = "must_german"' 'profiles/2160p Remux.yml'
-          echo "✅ 2160p Remux → language: must_german"
+          yq -i '.name = "Deutsch - 2160p Remux"' 'profiles/2160p Remux.yml'
+          mv 'profiles/2160p Remux.yml' 'profiles/Deutsch - 2160p Remux.yml'
+          echo "✅ 2160p Remux → Deutsch - 2160p Remux (language: must_german)"
 
           # ── Weitere Overrides hier ergänzen, z.B.: ──
-          # yq -i '.language = "must_german"' 'profiles/1080p Quality.yml'
-          # yq -i '(.custom_formats[] | select(.name == "NF")).score = 5000' 'profiles/2160p Remux.yml'
+          # yq -i '.language = "must_german" | .name = "Deutsch - 1080p Quality"' 'profiles/1080p Quality.yml'
+          # mv 'profiles/1080p Quality.yml' 'profiles/Deutsch - 1080p Quality.yml'
 
       - name: Commit & Push
         if: steps.merge.outputs.merged == 'true'
