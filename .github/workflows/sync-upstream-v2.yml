@@ -1,0 +1,54 @@
+name: Sync Upstream v2 and Keep Max Overrides
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync-v2:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/Dictionarry-Hub/database.git || true
+          git fetch upstream --no-tags
+
+      - name: Merge upstream v2
+        run: |
+          git merge upstream/v2 --no-edit -X theirs
+
+      - name: Remove upstream-only workflows
+        run: |
+          rm -f .github/workflows/notify.yml
+          rm -f .github/workflows/devSync.yml
+
+      - name: Verify Max override op exists
+        run: |
+          test -f ops/188.add-max-german-profile-variants.sql
+          grep -q "Anime Deutsch" ops/188.add-max-german-profile-variants.sql
+          grep -q "quality_profile_languages" ops/188.add-max-german-profile-variants.sql
+
+      - name: Commit and push
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: sync upstream v2 and keep Max overrides"
+            git push origin "$(git branch --show-current)"
+          fi
